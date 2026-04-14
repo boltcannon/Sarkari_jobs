@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Sarkari Jobs",
+    "slug": "sarkari-jobs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sarkarijobs.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#185FA5"
+      },
+      "package": "com.sarkarijobs.app",
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#185FA5",
+          "sounds": [],
+          "androidMode": "default",
+          "androidCollapsedTitle": "Sarkari Jobs"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b753d777-8ddb-4510-8adc-1f252eb41976"
+      }
+    },
+    "owner": "boltcannon"
+  }
+}
