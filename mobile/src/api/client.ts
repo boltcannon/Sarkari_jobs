@@ -1,9 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// 10.0.2.2 maps to localhost on Android emulator.
-// For physical device testing, replace with your LAN IP e.g. http://192.168.x.x:8000
-export const API_BASE_URL = "http://10.156.105.179:8000";
+export const API_BASE_URL = "https://sarkari-jobs-api-eyq2.onrender.com";
 
 export const STORAGE_KEYS = {
   TOKEN: "auth_token",
