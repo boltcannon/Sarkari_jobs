@@ -3,6 +3,7 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from .database import engine
 from .models import Base
@@ -18,6 +19,14 @@ async def lifespan(app: FastAPI):
     # Create all tables
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables ensured.")
+
+    # Add content_type column if it doesn't exist (safe on re-runs)
+    with engine.connect() as conn:
+        conn.execute(text(
+            "ALTER TABLE jobs ADD COLUMN IF NOT EXISTS content_type VARCHAR(20) DEFAULT 'job'"
+        ))
+        conn.commit()
+    logger.info("content_type column ensured.")
 
     # Start background scraper scheduler
     start_scheduler()

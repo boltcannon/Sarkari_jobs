@@ -49,6 +49,7 @@ export interface Job {
   notification_pdf: string | null;
   last_date: string | null;
   source: string | null;
+  content_type: string | null;
   created_at: string;
 }
 
@@ -89,6 +90,7 @@ export const jobsApi = {
     state?: string;
     include_closed?: boolean;
     sort?: "newest" | "deadline" | "posts";
+    content_type?: "job" | "admit_card" | "result";
   }) => api.get<JobListResponse>("/api/jobs", { params }),
 
   detail: (id: number) => api.get<Job>(`/api/jobs/${id}`),

@@ -8,6 +8,7 @@ import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SavedScreen from "../screens/SavedScreen";
 import TrackerScreen from "../screens/TrackerScreen";
+import NoticesScreen from "../screens/NoticesScreen";
 import JobDetailScreen from "../screens/JobDetailScreen";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -39,6 +40,11 @@ function HomeTabs() {
         name="Home"
         component={HomeScreen}
         options={{ tabBarIcon: ({ focused }) => <TabIcon icon="🏠" focused={focused} /> }}
+      />
+      <Tab.Screen
+        name="Notices"
+        component={NoticesScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon icon="📄" focused={focused} /> }}
       />
       <Tab.Screen
         name="Saved"

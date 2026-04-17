@@ -22,9 +22,12 @@ def list_jobs(
     categories: Optional[str] = None,
     include_closed: bool = Query(False),
     sort: str = Query("newest"),
+    content_type: str = Query("job"),
     db: Session = Depends(get_db),
 ):
-    query = db.query(models.Job)
+    query = db.query(models.Job).filter(
+        models.Job.content_type == content_type
+    )
 
     if not include_closed:
         now = datetime.utcnow()

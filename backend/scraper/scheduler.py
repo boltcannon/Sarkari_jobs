@@ -9,6 +9,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from ..config import settings
 from .ssc_scraper import scrape_ssc
 from .upsc_scraper import scrape_upsc
+from .notices_scraper import scrape_notices
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ def _run_all_scrapers() -> dict:
     results = {
         "ssc": scrape_ssc(max_jobs=300),
         "upsc": scrape_upsc(max_jobs=80),
+        "notices": scrape_notices(max_per_type=60),
     }
     logger.info("Scraper run complete: %s", results)
     return results

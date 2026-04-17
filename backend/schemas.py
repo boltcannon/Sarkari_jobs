@@ -24,6 +24,7 @@ class JobBase(BaseModel):
     last_date: Optional[datetime] = None
     source_url: Optional[str] = None
     source: Optional[str] = None
+    content_type: Optional[str] = "job"
 
 
 class JobCreate(JobBase):

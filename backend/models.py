@@ -49,6 +49,7 @@ class Job(Base):
     last_date = Column(DateTime, nullable=True)
     source_url = Column(String(1000), nullable=True)
     source = Column(String(100), nullable=True)
+    content_type = Column(String(20), default="job", server_default="job", nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
