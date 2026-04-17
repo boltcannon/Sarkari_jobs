@@ -17,6 +17,8 @@ import SkeletonCard from "../components/SkeletonCard";
 import FilterModal, { SortOption } from "../components/FilterModal";
 import { useTheme } from "../theme/ThemeContext";
 
+const STATIC_BLUE = "#185FA5"; // used in static StyleSheet only
+
 const CATEGORIES = ["All", "SSC", "UPSC", "Railway", "Banking", "State PSC", "Defence", "Police", "Teaching"];
 
 type FeedMode = "forYou" | "all";
@@ -327,7 +329,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#EBEBEB",
   },
-  appName: { fontSize: 20, fontWeight: "800", color: BLUE, letterSpacing: -0.5 },
+  appName: { fontSize: 20, fontWeight: "800", color: STATIC_BLUE, letterSpacing: -0.5 },
   profileIcon: { fontSize: 22 },
 
   // Feed toggle
@@ -355,7 +357,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   toggleText: { fontSize: 13, color: "#888", fontWeight: "600" },
-  toggleTextActive: { color: BLUE, fontWeight: "700" },
+  toggleTextActive: { color: STATIC_BLUE, fontWeight: "700" },
 
   // Greeting
   greetingRow: {
@@ -376,7 +378,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#C5D8F5",
   },
-  bannerText: { fontSize: 13, color: BLUE, fontWeight: "600" },
+  bannerText: { fontSize: 13, color: STATIC_BLUE, fontWeight: "600" },
 
   // Search
   searchRow: {
@@ -412,7 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   filterBtnActive: {
-    borderColor: BLUE,
+    borderColor: STATIC_BLUE,
     backgroundColor: "#E8F0FB",
   },
   filterBtnIcon: { fontSize: 18 },
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -4,
     right: -4,
-    backgroundColor: BLUE,
+    backgroundColor: STATIC_BLUE,
     borderRadius: 8,
     minWidth: 16,
     height: 16,
@@ -444,7 +446,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  categoryBtnActive: { backgroundColor: BLUE, borderColor: BLUE },
+  categoryBtnActive: { backgroundColor: STATIC_BLUE, borderColor: STATIC_BLUE },
   categoryText: { fontSize: 13, color: "#555", fontWeight: "500", includeFontPadding: false },
   categoryTextActive: { color: "#FFF", fontWeight: "700" },
 
