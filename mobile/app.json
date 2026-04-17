@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Sarkari Jobs",
-    "slug": "sarkari-jobs",
+    "name": "Where is my Job",
+    "slug": "where-is-my-job",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sarkarijobs.app"
+      "bundleIdentifier": "com.whereismyjob.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#185FA5"
       },
-      "package": "com.sarkarijobs.app",
+      "package": "com.whereismyjob.app",
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "NOTIFICATIONS",
@@ -40,7 +40,7 @@
           "color": "#185FA5",
           "sounds": [],
           "androidMode": "default",
-          "androidCollapsedTitle": "Sarkari Jobs"
+          "androidCollapsedTitle": "Where is my Job"
         }
       ]
     ],

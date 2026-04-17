@@ -137,7 +137,7 @@ export default function HomeScreen({ navigation }: any) {
     <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.appName}>Sarkari Jobs</Text>
+        <Text style={styles.appName}>Where is my Job? 🔍</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("Profile")}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}

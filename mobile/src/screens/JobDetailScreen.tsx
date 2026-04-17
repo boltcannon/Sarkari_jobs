@@ -91,7 +91,7 @@ export default function JobDetailScreen({ route }: any) {
       job.total_posts ? `💼 ${job.total_posts.toLocaleString()} Posts` : null,
       lastDate ? `📅 Last Date: ${lastDate}` : null,
       job.apply_link ? `\n🔗 Apply: ${job.apply_link}` : null,
-      `\nFound on Sarkari Jobs App`,
+      `\nFound on Where is my Job App 🔍`,
     ].filter(Boolean).join("\n");
 
     try {
