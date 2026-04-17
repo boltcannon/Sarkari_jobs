@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { profileStorage, UserProfile } from "../api/client";
-import { useTheme, ThemeMode } from "../theme/ThemeContext";
+import { useTheme } from "../theme/ThemeContext";
 
 const CATEGORIES = [
   "SSC", "UPSC", "Railway", "Banking",
@@ -111,24 +111,19 @@ export default function ProfileScreen() {
 
         {/* Dark Mode toggle */}
         <View style={[styles.darkModeRow, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={{ fontSize: 18 }}>{theme.isDark ? "🌙" : "☀️"}</Text>
-          <Text style={[styles.darkModeLabel, { color: theme.text }]}>Dark Mode</Text>
-          <View style={styles.modeButtons}>
-            {(["light", "system", "dark"] as ThemeMode[]).map((m) => (
-              <TouchableOpacity
-                key={m}
-                onPress={() => setMode(m)}
-                style={[styles.modeBtn,
-                  { backgroundColor: mode === m ? theme.blue : theme.chip,
-                    borderColor: mode === m ? theme.blue : theme.chipBorder }]}
-              >
-                <Text style={{ fontSize: 11, fontWeight: "600",
-                  color: mode === m ? "#FFF" : theme.subtext }}>
-                  {m.charAt(0).toUpperCase() + m.slice(1)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          <Text style={{ fontSize: 22 }}>{theme.isDark ? "🌙" : "☀️"}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.darkModeLabel, { color: theme.text }]}>Dark Mode</Text>
+            <Text style={{ fontSize: 12, color: theme.muted }}>
+              {theme.isDark ? "Dark theme is on" : "Light theme is on"}
+            </Text>
           </View>
+          <Switch
+            value={theme.isDark}
+            onValueChange={(val) => setMode(val ? "dark" : "light")}
+            trackColor={{ false: "#DDD", true: theme.blue }}
+            thumbColor="#FFF"
+          />
         </View>
 
         <View style={styles.section}>
@@ -188,12 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", gap: 10,
     padding: 14, borderRadius: 12, borderWidth: 1, marginBottom: 20,
   },
-  darkModeLabel:{ flex: 1, fontSize: 15, fontWeight: "600" },
-  modeButtons:  { flexDirection: "row", gap: 6 },
-  modeBtn:      {
-    paddingHorizontal: 10, paddingVertical: 5,
-    borderRadius: 8, borderWidth: 1,
-  },
+  darkModeLabel:{ fontSize: 15, fontWeight: "600" },
   section:      { marginBottom: 24 },
   label:        { fontSize: 14, fontWeight: "700", marginBottom: 10 },
   hint:         { fontSize: 12, marginBottom: 8 },
