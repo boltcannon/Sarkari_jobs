@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Where is my Job",
-    "slug": "where-is-my-job",
+    "slug": "sarkari-jobs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
