@@ -637,19 +637,35 @@ def _get_homepage_job_links() -> list[tuple[str, str]]:
 
 # ── Extra source pages for upcoming / active jobs ──────────────────────────────
 _EXTRA_PAGES = [
+    # Central govt
     "https://www.freejobalert.com/government-jobs/",
     "https://www.freejobalert.com/government-jobs/page/2/",
     "https://www.freejobalert.com/government-jobs/page/3/",
+    "https://www.freejobalert.com/government-jobs/page/4/",
+    # Banking & Finance
     "https://www.freejobalert.com/bank-jobs/",
     "https://www.freejobalert.com/bank-jobs/page/2/",
+    "https://www.freejobalert.com/bank-jobs/page/3/",
+    # Railway
     "https://www.freejobalert.com/railway-jobs/",
     "https://www.freejobalert.com/railway-jobs/page/2/",
+    "https://www.freejobalert.com/railway-jobs/page/3/",
+    # Police & Defence
     "https://www.freejobalert.com/police-defence-jobs/",
     "https://www.freejobalert.com/police-defence-jobs/page/2/",
+    "https://www.freejobalert.com/police-defence-jobs/page/3/",
+    # Teaching & Education
     "https://www.freejobalert.com/teaching-faculty-jobs/",
     "https://www.freejobalert.com/teaching-faculty-jobs/page/2/",
+    "https://www.freejobalert.com/teaching-faculty-jobs/page/3/",
+    # State Govt / PSC
     "https://www.freejobalert.com/state-government-jobs/",
     "https://www.freejobalert.com/state-government-jobs/page/2/",
+    "https://www.freejobalert.com/state-government-jobs/page/3/",
+    "https://www.freejobalert.com/state-government-jobs/page/4/",
+    # PSU / Technical
+    "https://www.freejobalert.com/psu-jobs/",
+    "https://www.freejobalert.com/psu-jobs/page/2/",
 ]
 
 

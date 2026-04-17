@@ -14,6 +14,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Job, UserProfile, jobsApi, savedJobsStorage, profileStorage } from "../api/client";
 import JobCard from "../components/JobCard";
 import SkeletonCard from "../components/SkeletonCard";
+import FilterModal, { SortOption } from "../components/FilterModal";
 
 const BLUE = "#185FA5";
 const CATEGORIES = ["All", "SSC", "UPSC", "Railway", "Banking", "State PSC", "Defence", "Police", "Teaching"];
@@ -31,7 +32,13 @@ export default function HomeScreen({ navigation }: any) {
   const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [feedMode, setFeedMode] = useState<FeedMode>("forYou");
+  const [sort, setSort] = useState<SortOption>("newest");
+  const [filterState, setFilterState] = useState("");
+  const [filterVisible, setFilterVisible] = useState(false);
   const searchTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const activeFilterCount =
+    (sort !== "newest" ? 1 : 0) + (filterState ? 1 : 0);
 
   // Reload profile + saved IDs whenever screen gains focus
   useFocusEffect(
@@ -43,16 +50,17 @@ export default function HomeScreen({ navigation }: any) {
 
   const buildParams = useCallback(
     (p: number, cat: string, q: string) => {
-      const params: Record<string, any> = { page: p, per_page: 20 };
+      const params: Record<string, any> = { page: p, per_page: 20, sort };
       if (feedMode === "forYou" && profile?.preferred_categories?.length) {
         params.categories = profile.preferred_categories.join(",");
       } else if (feedMode === "all" && cat !== "All") {
         params.category = cat;
       }
       if (q.trim()) params.q = q.trim();
+      if (filterState) params.state = filterState;
       return params;
     },
-    [feedMode, profile, category]
+    [feedMode, profile, category, sort, filterState]
   );
 
   const fetchJobs = useCallback(
@@ -72,11 +80,11 @@ export default function HomeScreen({ navigation }: any) {
     [buildParams, category, query]
   );
 
-  // Refetch when feedMode, category, or profile changes
+  // Refetch when feedMode, category, profile, sort, or filterState changes
   useEffect(() => {
     setLoading(true);
     fetchJobs(1, category, query, true).finally(() => setLoading(false));
-  }, [feedMode, category, profile?.preferred_categories?.join(",")]);
+  }, [feedMode, category, profile?.preferred_categories?.join(","), sort, filterState]);
 
   // Debounced search
   useEffect(() => {
@@ -115,6 +123,11 @@ export default function HomeScreen({ navigation }: any) {
     setCategory("All");
     setQuery("");
     setFeedMode(mode);
+  };
+
+  const handleFilterApply = (newSort: SortOption, newState: string) => {
+    setSort(newSort);
+    setFilterState(newState);
   };
 
   const hasPreferences = (profile?.preferred_categories?.length ?? 0) > 0;
@@ -175,25 +188,39 @@ export default function HomeScreen({ navigation }: any) {
         </TouchableOpacity>
       )}
 
-      {/* Search bar */}
-      <View style={styles.searchBox}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search jobs, departments..."
-          placeholderTextColor="#999"
-          value={query}
-          onChangeText={setQuery}
-          returnKeyType="search"
-        />
-        {query.length > 0 && (
-          <TouchableOpacity
-            onPress={() => setQuery("")}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Text style={styles.clearIcon}>✕</Text>
-          </TouchableOpacity>
-        )}
+      {/* Search bar + Filter button */}
+      <View style={styles.searchRow}>
+        <View style={styles.searchBox}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search jobs, departments..."
+            placeholderTextColor="#999"
+            value={query}
+            onChangeText={setQuery}
+            returnKeyType="search"
+          />
+          {query.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setQuery("")}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.clearIcon}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        <TouchableOpacity
+          style={[styles.filterBtn, activeFilterCount > 0 && styles.filterBtnActive]}
+          onPress={() => setFilterVisible(true)}
+          activeOpacity={0.75}
+        >
+          <Text style={styles.filterBtnIcon}>⚙️</Text>
+          {activeFilterCount > 0 && (
+            <View style={styles.filterBadge}>
+              <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {/* Category chips (All Jobs mode only) */}
@@ -271,6 +298,14 @@ export default function HomeScreen({ navigation }: any) {
           contentContainerStyle={{ paddingBottom: 24 }}
         />
       )}
+
+      <FilterModal
+        visible={filterVisible}
+        sort={sort}
+        filterState={filterState}
+        onApply={handleFilterApply}
+        onClose={() => setFilterVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -341,13 +376,19 @@ const styles = StyleSheet.create({
   bannerText: { fontSize: 13, color: BLUE, fontWeight: "600" },
 
   // Search
-  searchBox: {
+  searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF",
     marginHorizontal: 12,
     marginTop: 10,
     marginBottom: 2,
+    gap: 8,
+  },
+  searchBox: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -357,6 +398,34 @@ const styles = StyleSheet.create({
   searchIcon: { fontSize: 15, marginRight: 8 },
   searchInput: { flex: 1, fontSize: 14, color: "#1A1A1A" },
   clearIcon: { fontSize: 14, color: "#999", paddingLeft: 8 },
+  filterBtn: {
+    width: 42,
+    height: 42,
+    borderRadius: 10,
+    backgroundColor: "#FFF",
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filterBtnActive: {
+    borderColor: BLUE,
+    backgroundColor: "#E8F0FB",
+  },
+  filterBtnIcon: { fontSize: 18 },
+  filterBadge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: BLUE,
+    borderRadius: 8,
+    minWidth: 16,
+    height: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 3,
+  },
+  filterBadgeText: { fontSize: 10, color: "#FFF", fontWeight: "700" },
 
   // Category chips (All Jobs mode)
   categoryStrip: { height: 40, justifyContent: "center", overflow: "hidden", marginTop: 6 },

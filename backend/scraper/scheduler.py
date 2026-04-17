@@ -19,8 +19,8 @@ def _run_all_scrapers() -> dict:
     """Run SSC + UPSC scrapers and return summary."""
     logger.info("Running all scrapers...")
     results = {
-        "ssc": scrape_ssc(max_jobs=150),
-        "upsc": scrape_upsc(max_jobs=50),
+        "ssc": scrape_ssc(max_jobs=300),
+        "upsc": scrape_upsc(max_jobs=80),
     }
     logger.info("Scraper run complete: %s", results)
     return results

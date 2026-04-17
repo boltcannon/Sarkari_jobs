@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, asc, desc, func
 
 from .. import models, schemas
 from ..database import get_db
@@ -21,6 +21,7 @@ def list_jobs(
     q: Optional[str] = None,
     categories: Optional[str] = None,
     include_closed: bool = Query(False),
+    sort: str = Query("newest"),
     db: Session = Depends(get_db),
 ):
     query = db.query(models.Job)
@@ -56,8 +57,16 @@ def list_jobs(
         )
 
     total = query.count()
+
+    if sort == "deadline":
+        order = models.Job.last_date.asc().nullslast()
+    elif sort == "posts":
+        order = models.Job.total_posts.desc().nullslast()
+    else:
+        order = models.Job.created_at.desc()
+
     items = (
-        query.order_by(models.Job.created_at.desc())
+        query.order_by(order)
         .offset((page - 1) * per_page)
         .limit(per_page)
         .all()

@@ -77,6 +77,7 @@ export const jobsApi = {
     q?: string;
     state?: string;
     include_closed?: boolean;
+    sort?: "newest" | "deadline" | "posts";
   }) => api.get<JobListResponse>("/api/jobs", { params }),
 
   detail: (id: number) => api.get<Job>(`/api/jobs/${id}`),
