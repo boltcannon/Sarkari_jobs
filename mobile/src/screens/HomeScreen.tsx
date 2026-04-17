@@ -15,13 +15,15 @@ import { Job, UserProfile, jobsApi, savedJobsStorage, profileStorage } from "../
 import JobCard from "../components/JobCard";
 import SkeletonCard from "../components/SkeletonCard";
 import FilterModal, { SortOption } from "../components/FilterModal";
+import { useTheme } from "../theme/ThemeContext";
 
-const BLUE = "#185FA5";
 const CATEGORIES = ["All", "SSC", "UPSC", "Railway", "Banking", "State PSC", "Defence", "Police", "Teaching"];
 
 type FeedMode = "forYou" | "all";
 
 export default function HomeScreen({ navigation }: any) {
+  const { theme } = useTheme();
+  const BLUE = theme.blue;
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -134,10 +136,10 @@ export default function HomeScreen({ navigation }: any) {
   const firstName = profile?.name?.split(" ")[0] || "";
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.bg }]} edges={["top"]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.appName}>Where is my Job? 🔍</Text>
+      <View style={[styles.header, { backgroundColor: theme.header, borderBottomColor: theme.tabBorder }]}>
+        <Text style={[styles.appName, { color: BLUE }]}>Where is my Job? 🔍</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("Profile")}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -272,6 +274,7 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate("JobDetail", { job: item })}
               onSave={() => toggleSave(item)}
               isSaved={savedIds.has(item.id)}
+              userDob={profile?.dob}
             />
           )}
           onEndReached={loadMore}

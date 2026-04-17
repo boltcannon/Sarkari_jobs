@@ -1,5 +1,5 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text } from "react-native";
@@ -7,26 +7,28 @@ import { Text } from "react-native";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SavedScreen from "../screens/SavedScreen";
+import TrackerScreen from "../screens/TrackerScreen";
 import JobDetailScreen from "../screens/JobDetailScreen";
+import { useTheme } from "../theme/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-const BLUE = "#185FA5";
 
 function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.4 }}>{icon}</Text>;
 }
 
 function HomeTabs() {
+  const { theme } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: BLUE,
-        tabBarInactiveTintColor: "#AAA",
+        tabBarActiveTintColor: theme.blue,
+        tabBarInactiveTintColor: theme.muted,
         tabBarStyle: {
-          backgroundColor: "#FFF",
-          borderTopColor: "#EBEBEB",
+          backgroundColor: theme.tabBar,
+          borderTopColor: theme.tabBorder,
           height: 58,
           paddingBottom: 8,
         },
@@ -44,6 +46,11 @@ function HomeTabs() {
         options={{ tabBarIcon: ({ focused }) => <TabIcon icon="★" focused={focused} /> }}
       />
       <Tab.Screen
+        name="Tracker"
+        component={TrackerScreen}
+        options={{ tabBarIcon: ({ focused }) => <TabIcon icon="📋" focused={focused} /> }}
+      />
+      <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{ tabBarIcon: ({ focused }) => <TabIcon icon="👤" focused={focused} /> }}
@@ -53,14 +60,22 @@ function HomeTabs() {
 }
 
 export default function AppNavigator() {
+  const { theme } = useTheme();
+
+  const navTheme = {
+    ...(theme.isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(theme.isDark ? DarkTheme : DefaultTheme).colors,
+      background: theme.bg,
+      card: theme.header,
+      text: theme.text,
+      border: theme.border,
+    },
+  };
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          animation: "slide_from_right",
-          headerShown: false,
-        }}
-      >
+    <NavigationContainer theme={navTheme}>
+      <Stack.Navigator screenOptions={{ animation: "slide_from_right", headerShown: false }}>
         <Stack.Screen name="Main" component={HomeTabs} />
         <Stack.Screen
           name="JobDetail"
@@ -68,9 +83,9 @@ export default function AppNavigator() {
           options={{
             headerShown: true,
             title: "Job Details",
-            headerTintColor: BLUE,
+            headerTintColor: theme.blue,
             headerBackTitle: "Back",
-            headerStyle: { backgroundColor: "#FFF" },
+            headerStyle: { backgroundColor: theme.header },
             headerShadowVisible: true,
             animation: "slide_from_right",
           }}

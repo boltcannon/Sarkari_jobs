@@ -64,6 +64,17 @@ export interface UserProfile {
   qualification: string;
   state: string;
   preferred_categories: JobCategory[];
+  dob?: string; // "YYYY-MM-DD"
+}
+
+export type TrackStatus = "applied" | "exam" | "result" | "selected" | "rejected";
+
+export interface TrackedJob {
+  job: Job;
+  status: TrackStatus;
+  appliedAt: string;
+  examDate?: string;
+  notes?: string;
 }
 
 // ── Jobs API ───────────────────────────────────────────────────────────────────
@@ -133,6 +144,35 @@ export const profileStorage = {
   },
   save: async (profile: UserProfile): Promise<void> => {
     await AsyncStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
+  },
+};
+
+// ── Application Tracker (AsyncStorage) ───────────────────────────────────────
+
+const TRACKER_KEY = "tracker_jobs";
+
+export const trackerStorage = {
+  getAll: async (): Promise<TrackedJob[]> => {
+    const raw = await AsyncStorage.getItem(TRACKER_KEY);
+    return raw ? JSON.parse(raw) : [];
+  },
+  upsert: async (job: Job, status: TrackStatus, examDate?: string): Promise<void> => {
+    const all = await trackerStorage.getAll();
+    const idx = all.findIndex((t) => t.job.id === job.id);
+    if (idx >= 0) {
+      all[idx] = { ...all[idx], status, examDate };
+    } else {
+      all.unshift({ job, status, appliedAt: new Date().toISOString(), examDate });
+    }
+    await AsyncStorage.setItem(TRACKER_KEY, JSON.stringify(all));
+  },
+  remove: async (jobId: number): Promise<void> => {
+    const all = await trackerStorage.getAll();
+    await AsyncStorage.setItem(TRACKER_KEY, JSON.stringify(all.filter((t) => t.job.id !== jobId)));
+  },
+  getStatus: async (jobId: number): Promise<TrackStatus | null> => {
+    const all = await trackerStorage.getAll();
+    return all.find((t) => t.job.id === jobId)?.status ?? null;
   },
 };
 
