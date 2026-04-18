@@ -79,7 +79,7 @@ def trigger_scrape():
 @app.get("/api/admin/stats")
 def get_stats():
     """Live dashboard stats — jobs DB + registered push users."""
-    from datetime import date, timedelta
+    from datetime import datetime, date, timedelta
     from sqlalchemy import func
     from .database import SessionLocal
     from .models import Job, PushSubscription
