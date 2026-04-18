@@ -29,6 +29,7 @@ const CATEGORIES: JobCategory[] = [
 
 const STEPS = [
   { label: "Your name", emoji: "👋" },
+  { label: "Date of birth", emoji: "🎂" },
   { label: "Qualification", emoji: "🎓" },
   { label: "Your state", emoji: "📍" },
   { label: "Job interests", emoji: "🏆" },
@@ -41,6 +42,8 @@ interface Props {
 export default function OnboardingScreen({ onComplete }: Props) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [dob, setDob] = useState("");
+  const [dobError, setDobError] = useState("");
   const [qualification, setQualification] = useState("");
   const [state, setState] = useState("All India");
   const [categories, setCategories] = useState<JobCategory[]>([]);
@@ -63,6 +66,12 @@ export default function OnboardingScreen({ onComplete }: Props) {
   };
 
   const goNext = () => {
+    // Validate DOB if user typed something on step 1
+    if (step === 1 && dob.length > 0 && !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+      setDobError("Use format YYYY-MM-DD  e.g. 2000-05-15");
+      return;
+    }
+    setDobError("");
     animateNext(1);
     setStep((s) => s + 1);
   };
@@ -82,6 +91,7 @@ export default function OnboardingScreen({ onComplete }: Props) {
       qualification,
       state,
       preferred_categories: categories,
+      dob: dob || undefined,
     };
     await profileStorage.save(profile);
     await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_DONE, "true");
@@ -90,6 +100,7 @@ export default function OnboardingScreen({ onComplete }: Props) {
 
   const canProceed = [
     name.trim().length > 0,
+    true,                      // DOB is optional — always can proceed
     qualification.length > 0,
     true,
     true,
@@ -141,6 +152,29 @@ export default function OnboardingScreen({ onComplete }: Props) {
 
           {step === 1 && (
             <View>
+              <Text style={styles.question}>When were you born?</Text>
+              <Text style={styles.hint}>
+                Used to check age eligibility on jobs. You can skip this.
+              </Text>
+              <TextInput
+                style={[styles.textInput, dobError ? styles.textInputError : null]}
+                value={dob}
+                onChangeText={(t) => { setDob(t); setDobError(""); }}
+                placeholder="YYYY-MM-DD  e.g. 2000-05-15"
+                placeholderTextColor="#BBB"
+                keyboardType="numeric"
+                maxLength={10}
+                returnKeyType="next"
+                onSubmitEditing={goNext}
+              />
+              {dobError ? (
+                <Text style={styles.errorText}>{dobError}</Text>
+              ) : null}
+            </View>
+          )}
+
+          {step === 2 && (
+            <View>
               <Text style={styles.question}>Your highest qualification</Text>
               <View style={styles.chipGrid}>
                 {QUALIFICATIONS.map((q) => (
@@ -158,7 +192,7 @@ export default function OnboardingScreen({ onComplete }: Props) {
             </View>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <View>
               <Text style={styles.question}>Which state are you from?</Text>
               <View style={styles.chipGrid}>
@@ -177,7 +211,7 @@ export default function OnboardingScreen({ onComplete }: Props) {
             </View>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <View>
               <Text style={styles.question}>Which job categories interest you?</Text>
               <Text style={styles.hint}>Select all that apply — you can change this later</Text>
@@ -210,11 +244,11 @@ export default function OnboardingScreen({ onComplete }: Props) {
         )}
         <TouchableOpacity
           style={[styles.nextBtn, !canProceed && styles.nextBtnDisabled]}
-          onPress={step === 3 ? finish : goNext}
+          onPress={step === 4 ? finish : goNext}
           disabled={!canProceed}
         >
           <Text style={styles.nextText}>
-            {step === 3 ? "Find My Jobs →" : "Next →"}
+            {step === 4 ? "Find My Jobs →" : "Next →"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -260,6 +294,8 @@ const styles = StyleSheet.create({
     color: "#1A1A1A",
     backgroundColor: "#FAFAFA",
   },
+  textInputError: { borderColor: "#D32F2F" },
+  errorText: { color: "#D32F2F", fontSize: 12, marginTop: 6 },
   chipGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   chip: {
     paddingHorizontal: 14,

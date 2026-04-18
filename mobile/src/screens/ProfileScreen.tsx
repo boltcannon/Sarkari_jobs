@@ -6,6 +6,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { profileStorage, UserProfile } from "../api/client";
 import { useTheme } from "../theme/ThemeContext";
+import { useAuth } from "../context/AuthContext";
+import { registerPushToken } from "../utils/notifications";
 
 const CATEGORIES = [
   "SSC", "UPSC", "Railway", "Banking",
@@ -65,6 +67,7 @@ function RadioSelect({ options, selected, onSelect, theme }: any) {
 
 export default function ProfileScreen() {
   const { theme, mode, setMode } = useTheme();
+  const { logout } = useAuth();
   const [name, setName] = useState("");
   const [qualification, setQualification] = useState("");
   const [state, setState] = useState("All India");
@@ -84,6 +87,17 @@ export default function ProfileScreen() {
   const toggleCategory = (cat: string) =>
     setCategories((prev) => prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]);
 
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Logout", style: "destructive", onPress: logout },
+      ]
+    );
+  };
+
   const save = async () => {
     // Validate DOB if provided
     if (dob && !/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
@@ -96,6 +110,7 @@ export default function ProfileScreen() {
       dob: dob || undefined,
     };
     await profileStorage.save(profile);
+    registerPushToken(); // refresh push subscription with updated categories
     Alert.alert("Saved! ✅", "Your preferences have been saved.");
   };
 
@@ -169,6 +184,10 @@ export default function ProfileScreen() {
         <TouchableOpacity style={[styles.saveBtn, { backgroundColor: theme.blue }]} onPress={save}>
           <Text style={styles.saveBtnText}>Save Preferences</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+          <Text style={styles.logoutBtnText}>🚪 Logout</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -196,4 +215,9 @@ const styles = StyleSheet.create({
   chipText:     { fontSize: 13 },
   saveBtn:      { borderRadius: 10, paddingVertical: 14, alignItems: "center", marginTop: 8 },
   saveBtnText:  { color: "#FFF", fontWeight: "700", fontSize: 16 },
+  logoutBtn:    {
+    borderRadius: 10, paddingVertical: 14, alignItems: "center",
+    marginTop: 12, borderWidth: 1.5, borderColor: "#D32F2F",
+  },
+  logoutBtnText: { color: "#D32F2F", fontWeight: "700", fontSize: 16 },
 });

@@ -76,6 +76,63 @@ def trigger_scrape():
     return {"status": "started", "message": "Scrape running in background"}
 
 
+@app.get("/api/admin/stats")
+def get_stats():
+    """Live dashboard stats — jobs DB + registered push users."""
+    from datetime import date, timedelta
+    from sqlalchemy import func
+    from .database import SessionLocal
+    from .models import Job, PushSubscription
+
+    db = SessionLocal()
+    try:
+        today = datetime.utcnow().date()
+        week_ago = today - timedelta(days=7)
+
+        # ── Jobs ──────────────────────────────────────────────────────────────
+        total_jobs      = db.query(Job).count()
+        jobs_today      = db.query(Job).filter(func.date(Job.created_at) == today).count()
+        jobs_this_week  = db.query(Job).filter(func.date(Job.created_at) >= week_ago).count()
+        active_jobs     = db.query(Job).filter(
+            Job.last_date >= datetime.utcnow()
+        ).count()
+
+        # Jobs by category
+        by_category = {
+            row[0]: row[1]
+            for row in db.query(Job.category, func.count(Job.id))
+                         .group_by(Job.category).all()
+        }
+
+        # ── Push subscribers (= app installs with notifications on) ──────────
+        total_users = db.query(PushSubscription).count()
+
+        # Top categories among subscribers
+        all_subs = db.query(PushSubscription.categories).all()
+        cat_counts: dict[str, int] = {}
+        for (cats,) in all_subs:
+            for c in (cats or []):
+                cat_counts[c] = cat_counts.get(c, 0) + 1
+        top_categories = dict(sorted(cat_counts.items(), key=lambda x: -x[1]))
+
+        return {
+            "users": {
+                "total_registered": total_users,
+                "top_categories": top_categories,
+            },
+            "jobs": {
+                "total": total_jobs,
+                "active": active_jobs,
+                "added_today": jobs_today,
+                "added_this_week": jobs_this_week,
+                "by_category": by_category,
+            },
+            "generated_at": datetime.utcnow().isoformat() + "Z",
+        }
+    finally:
+        db.close()
+
+
 @app.get("/")
 def root():
     return {"message": "Sarkari Jobs API", "docs": "/docs"}
